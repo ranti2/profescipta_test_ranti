@@ -43,7 +43,7 @@
                   <thead>
                       <tr>
                           <th>No</th>
-                          <th>Action</th>
+                          <th style="width:10%">Action</th>
                           <th>Item Name</th>
                           <th>QTY</th>
                           <th>Price</th>
@@ -235,16 +235,17 @@
 
             if (!name || qty <= 0 || price <= 0) {
                 alert('Please fill out all fields correctly.');
-            }
+            } else {
 
-            row.find('.newRow').val('true');
-            row.find('input').attr('readonly', true);
-            var button = `
+                row.find('.newRow').val('true');
+                row.find('input').attr('readonly', true);
+                var button = `
                 <button type="button" class="btn btn-sm btn-secondary edit-row"><i class="fa fa-pencil-square-o"></i></button>
                 <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa fa-trash-o"></i></button>
-            `;
-            row.find('.action').append(button);
-            $(this).remove();
+                `;
+                row.find('.action').append(button);
+                $(this).remove();
+            }
         });
 
         $('#prevBtn').click(function () {

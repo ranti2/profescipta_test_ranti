@@ -1,3 +1,3 @@
 .DS_Store
-.vs/profescipta_test/xs/project-cache/profescipta_test-Debug.json
-profescipta_test/obj
+profescipta_test-Debug.json
+profescipta_test/obj/*

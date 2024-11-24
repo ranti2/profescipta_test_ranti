@@ -75,7 +75,7 @@
     </form>
 
     <a href="@Url.Action("Create")" class="btn btn-success mt-2">Add New Data</a>
-    <a href="@Url.Action("Export",new { keyword = ViewData["Keyword"],orderDateFilter = ViewData["orderDateFilter"] })" class="btn btn-success mt-2">Export to excel</a>
+    <a href="@Url.Action("Export",new { keyword = ViewData["Keyword"],orderDateFilter = ViewData["orderDateFilter"] })" class="btn btn-primary mt-2"><i class="fa fa-file-excel-o"></i> Export to excel</a>
 
     <table class="table mt-2" id="salesOrderTable">
         <thead>
