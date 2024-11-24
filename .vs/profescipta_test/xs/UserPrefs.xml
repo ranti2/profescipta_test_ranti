@@ -1,0 +1,43 @@
+﻿<Properties StartupConfiguration="{0DB396C7-2CD8-4A9C-8B15-E99A188B06E3}|https">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="profescipta_test/Repository/SalesOrderRepo.cs">
+    <Files>
+      <File FileName="profescipta_test/Views/SalesOrder/Create.cshtml" Line="76" Column="1" />
+      <File FileName="profescipta_test/appsettings.json" Line="1" Column="1" />
+      <File FileName="profescipta_test/Models/SalesOrderModel.cs" Line="9" Column="19" />
+      <File FileName="profescipta_test/Views/SalesOrder/Index.cshtml" Line="171" Column="54" />
+      <File FileName="profescipta_test/Controllers/SalesOrderController.cs" Line="77" Column="1" />
+      <File FileName="profescipta_test/Repository/SalesOrderRepo.cs" Line="321" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="profescipta_test" expanded="True">
+            <Node name="profescipta_test" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Repository" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Home" expanded="True" />
+                <Node name="SalesOrder" expanded="True" />
+                <Node name="Shared" expanded="True" />
+              </Node>
+              <Node name="wwwroot" expanded="True">
+                <Node name="js" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.profescipta__test PreferredExecutionTarget="/Applications/Google Chrome.app" />
+</Properties>

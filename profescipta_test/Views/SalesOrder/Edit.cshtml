@@ -1,0 +1,269 @@
+﻿@{
+    ViewData["Title"] = "EDIT - SALES ORDER";
+    var totalSavedItem = Model.Order.Count;
+    var indexItem = Model.Order.Count - 1;
+
+}
+
+<center><h3>@ViewData["Title"]</h3></center>
+<span class="d-block p-1 bg-secondary text-white" style="text-align: center;">Sales Order Informations</span><br/>
+
+<form method="post" id="salesOrderForm">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="SalesOrder">Sales Order</label>
+            <input type="text" class="form-control" id="SalesOrder" name="SalesOrder.SalesOrder" value="@Model.SalesOrder.SalesOrder" required />
+        </div>
+        <div class="form-group col-md-6">
+            <label for="Customer">Customer</label>
+            <input type="text" class="form-control" id="Customer" name="SalesOrder.Customer" value="@Model.SalesOrder.Customer" required />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label for="OrderDate">Order Date</label>
+            <input type="date" class="form-control" id="OrderDate" name="SalesOrder.OrderDate" value="@Model.SalesOrder.OrderDate.ToString("yyyy-MM-dd")" required />
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="Customer">Address</label>
+            <textarea class="form-control" id="Customer" name="SalesOrder.Address" value="@Model.SalesOrder.Address"> @Model.SalesOrder.Address </textarea>
+        </div>
+
+    </div>
+    <input type="hidden" name="SalesOrder.Id" value="@Model.SalesOrder.Id" />
+
+    <span class="d-block mt-2 p-1 bg-secondary text-white" style="text-align: center;">Detail Item Information</span>
+
+    <div class="col-md-3 mt-2">
+        <button type="button" class="btn btn-primary" id="addRowButton"> Add item</button>
+    </div>
+          <div class="mt-2">
+              <table class="table table-bordered" id="OrderItemTable" style="text-align:center;">
+                  <thead>
+                      <tr>
+                          <th>No</th>
+                          <th>Action</th>
+                          <th>Item Name</th>
+                          <th>QTY</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @for (var i = 0; i < Model.Order.Count; i++)
+                      {
+                          int ind = i + 1;
+                          <tr>
+                              <td>@ind</td>
+                              <td style="width:10%;">
+                                  <input type="hidden" name="Order[@i].SalesOrderId" class="newRow" value="@Model.SalesOrder.Id" />
+                                  <input type="hidden" name="Order[@i].IsTemp" value="true" />
+
+                                  <button type="button" class="btn btn-sm btn-secondary edit-row"><i class="fa fa-pencil-square-o"></i></button>
+                                  <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa fa-trash-o"></i></button>
+
+                              </td>
+                              <td><input name="Order[@i].Name" readonly type="text" class="form-control name" placeholder="Name" value="@Model.Order[i].Name"></td>
+                              <td><input name="Order[@i].Qty" readonly type="number" class="form-control qty" min="0" placeholder="0" value="@Model.Order[i].Qty"></td>
+                              <td><input name="Order[@i].Price" readonly type="number" class="form-control price" min="0" placeholder="0" value="@Model.Order[i].Price"></td>
+                              <td><input name="Order[@i].Total" readonly type="number" class="form-control total" value="@Model.Order[i].Total"></td>
+                          </tr>
+
+                      }
+                  </tbody>
+              </table>
+              <span class="d-block p-1 bg-light text-black" style="text-align: right;" id="calculate"></span>
+          </div>
+
+    <div class="d-flex mt-2 justify-content-between align-items-center">
+        <ul class="pagination">
+            <li class="page-item" id="prevBtn">
+                <button class="page-link" type="button">
+                    Previous
+                </button>
+            </li>
+            <div id="pageButtons" class="pagination"></div>
+            <li class="page-item" id="nextBtn">
+                <button class="page-link" type="button">
+                    Next
+                </button>
+            </li>
+        </ul>
+
+        <span id="pageInfo" class="text-muted"></span> 
+    </div>
+
+
+    <center>
+        <button type="submit" class="btn btn-primary" id="save-all">Save</button>
+        <a class="btn btn-secondary" href="@Url.Action("Index")">Close</a>
+    </center>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        const rowsPerPage = 5; 
+        let currentPage = 1; 
+        let totalRows = $('#OrderItemTable tbody tr').length; 
+        let totalPages = Math.ceil(totalRows / rowsPerPage);
+        let indexItem = @indexItem;
+
+        function showPage(page) {
+            const startRow = (page - 1) * rowsPerPage;
+            const endRow = startRow + rowsPerPage;
+
+            $('#OrderItemTable tbody tr').each(function (index) {
+                if (index >= startRow && index < endRow) {
+                    $(this).show(); 
+                } else {
+                    $(this).hide(); 
+                }
+            });
+
+            const startItem = startRow + 1;
+            const endItem = (endRow > totalRows) ? totalRows : endRow;
+            $('#pageInfo').text(startItem + ' - ' + endItem + ' of ' + totalRows + ' items');
+
+            $('#prevBtn').prop('disabled', page === 1);
+            $('#nextBtn').prop('disabled', page === totalPages);
+
+            updatePageButtons();
+        }
+
+        function updatePageButtons() {
+            $('#pageButtons').empty(); 
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = $('<li class="page-item">')
+                    .append($('<button class="page-link">').text(i).click(function () {
+                        currentPage = i;
+                        showPage(currentPage);
+                    }));
+
+                if (i === currentPage) {
+                    button.addClass('active');
+                }
+
+                $('#pageButtons').append(button);
+            }
+        }
+
+        function updateIndexItem() {
+            $('#OrderItemTable tbody tr').each(function (index) {
+                $(this).find('input[name*="Order["]').each(function () {
+                    const name = $(this).attr('name').replace(/\[\d+\]/, `[${index}]`);
+                    $(this).attr('name', name); 
+                });
+            });
+        }
+
+        function calculateItem() {
+            let totalItem = 0;
+            let total = 0;
+            $('#OrderItemTable tbody tr').each(function (index) {
+                totalItem = totalItem +1;
+                const totalPrice = parseInt($(this).find('.total').val()) || 0;
+                total = total + totalPrice;
+            });
+            const totalDis = "Total Item :  " + totalItem + "    Total Amount :  " + (new Intl.NumberFormat().format(total));
+            $('#calculate').text(totalDis);
+
+        }
+
+        $(document).on('click', '.edit-row', function () {
+            const row = $(this).closest('tr');
+            row.find('input').removeAttr('readonly');
+        });
+
+        $('#addRowButton').click(function () {
+            indexItem++;
+            console.log(indexItem);
+
+            const newRow = `
+                <tr>
+                    <td></td>
+                    <td class="action">
+                        <button class="btn btn-success save-row"><i class="fa fa-floppy-o"></i></button>
+                    </td>
+                    </td>
+                    <td>
+                        <input type="hidden" name="Order[`+indexItem+`].IsTemp" value="false" class="newRow"/>
+                        <input type="hidden" name="Order[`+indexItem+`].SalesOrderId" value="@Model.SalesOrder.Id">
+                        <input name="Order[`+indexItem+`].Name" type="text" class="form-control name" placeholder="Name">
+                    </td>
+                    <td><input name="Order[`+indexItem+`].Qty" type="number" class="form-control qty" min="0" placeholder="0"></td>
+                    <td><input name="Order[`+indexItem+`].Price" type="number" class="form-control price" min="0" placeholder="0"></td>
+                    <td><input name="Order[`+indexItem+`].Total" type="number" class="form-control total" readonly></td>
+                </tr>`;
+            $('#OrderItemTable tbody').prepend(newRow);
+            totalRows++;
+            totalPages = Math.ceil(totalRows / rowsPerPage);
+            updateIndexItem();
+            calculateItem()
+            showPage(currentPage); 
+        });
+
+        $(document).on('input', '.qty, .price', function () {
+            const row = $(this).closest('tr');
+            const qty = parseInt(row.find('.qty').val()) || 0;
+            const price = parseInt(row.find('.price').val()) || 0;
+            const total = qty * price;
+
+            row.find('.total').val(parseInt(total));
+            calculateItem()
+
+        });
+
+        $(document).on('click', '.remove-row', function () {
+            totalRows--;
+            totalPages = Math.ceil(totalRows / rowsPerPage);
+            const row = $(this).closest('tr');
+            row.remove();
+            calculateItem()
+            updateIndexItem();
+            showPage(currentPage);
+        });
+
+        $(document).on('click', '.save-row', function () {
+            const row = $(this).closest('tr');
+            const name = row.find('.name').val();
+            const qty = parseInt(row.find('.qty').val()) || 0;
+            const price = parseInt(row.find('.price').val()) || 0;
+            const total = parseInt(row.find('.total').val()) || 0;
+
+            if (!name || qty <= 0 || price <= 0) {
+                alert('Please fill out all fields correctly.');
+            }
+
+            row.find('.newRow').val('true');
+            row.find('input').attr('readonly', true);
+            var button = `
+                <button type="button" class="btn btn-sm btn-secondary edit-row"><i class="fa fa-pencil-square-o"></i></button>
+                <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa fa-trash-o"></i></button>
+            `;
+            row.find('.action').append(button);
+            $(this).remove();
+        });
+
+        $('#prevBtn').click(function () {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        });
+
+        $('#nextBtn').click(function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        });
+
+        calculateItem()
+        showPage(currentPage);
+
+    });
+</script>
+
